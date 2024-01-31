@@ -8,3 +8,10 @@ export class UserEntity {
 	}
 }
 
+export class UserUpdateEntity {
+	constructor(dto) {
+		this.full_name = dto.full_name
+		this.role = dto.role
+	}
+}
+

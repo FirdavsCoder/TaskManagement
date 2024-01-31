@@ -1,7 +1,7 @@
 import {ResData} from "../../common/resData.js";
 import {CompanyRepository} from "./company.repository.js";
 import {CompanyEntity} from "./entity/entity.js";
-import {CompanyException, CompanyNotFound} from "./exception/company.exception.js";
+import {CompanyNotFound} from "./exception/company.exception.js";
 
 
 export class CompanyService {
