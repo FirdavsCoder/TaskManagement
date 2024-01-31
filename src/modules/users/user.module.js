@@ -12,3 +12,6 @@ router.get("/:id", userController.getById);
 router.put("/:id", userController.updateById);
 router.delete("/:id", userController.delete);
 router.get("/", userController.getAll);
+
+
+export default {router}
