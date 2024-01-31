@@ -8,6 +8,11 @@ export const UserSchema = Joi.object({
 	role: Joi.string().required().max(30).min(4)
 })
 
+export const UserLoginSchema = Joi.object({
+	login: Joi.string().required(),
+	password: Joi.string().required()
+})
+
 export const UserUpdateSchema = Joi.object({
 	full_name: Joi.string().required().min(5).max(50),
 	role: Joi.string().required().min(4).max(20)

@@ -1,5 +1,5 @@
 import {ResData} from "../../common/resData.js";
-import {UserGetByIdSchema, UserSchema} from "./validation/user.schema.js";
+import {UserGetByIdSchema, UserLoginSchema, UserSchema, UserUpdateSchema} from "./validation/user.schema.js";
 import {UserException} from "./exception/user.exception.js";
 import {asyncHandler} from "../../middleware/async.js";
 import {CompanyException} from "../companies/exception/company.exception.js";
@@ -43,7 +43,7 @@ export class UserController {
 			throw new CompanyException(validatedDtoId.error.message)
 		}
 
-		const validatedDto = UserSchema.validate(req.body)
+		const validatedDto = UserUpdateSchema.validate(req.body)
 		if (validatedDto.error) {
 			throw new UserException(validatedDto.error.message)
 		}
@@ -58,6 +58,17 @@ export class UserController {
 			throw new UserException(validatedDto.error.message)
 		}
 		const resData = await this.#service.delete(req.params.id)
+		return res.status(resData.statusCode || 400).json(resData)
+	})
+
+	loginUser = asyncHandler( async (req, res, next) => {
+		const dto = req.body
+		const validated = UserLoginSchema.validate(dto)
+		if(validated.error) {
+			throw new UserException(validated.error.message)
+		}
+		const resData = await this.#service.loginUser(dto);
+		res.header("token", resData.data.token)
 		return res.status(resData.statusCode || 400).json(resData)
 	})
 }
