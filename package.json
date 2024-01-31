@@ -2,9 +2,9 @@
   "name": "task_management",
   "version": "1.0.0",
   "description": "Task Management Rest Api",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon src/server.js"
   },
   "author": "Firdavs Yorkulov",
   "license": "ISC",
@@ -18,5 +18,9 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "pg": "^8.11.3"
+  },
+  "type": "module",
+  "devDependencies": {
+    "nodemon": "^3.0.3"
   }
 }
