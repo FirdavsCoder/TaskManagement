@@ -20,9 +20,7 @@ export class Postgres {
 			} = await client.query(SQL, args)
 			return row;
 		}
-		catch (e) {
-			console.log("DB error: ", e.message)
-		} finally {
+		finally {
 			client.release();
 		}
 	}
@@ -32,9 +30,6 @@ export class Postgres {
 		try {
 			const {rows} = await client.query(SQL, args);
 			return rows;
-		}
-		catch (e) {
-			console.log("DB Error: ",e.message)
 		}
 		finally {
 			client.release();

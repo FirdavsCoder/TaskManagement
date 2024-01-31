@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 export const TaskSchema = Joi.object({
-	name: Joi.string().required(),
+	title: Joi.string().required(),
 	description: Joi.string().required(),
 	company_id: Joi.number().required(),
 	parent_id: Joi.number(),

@@ -39,7 +39,7 @@ export class TaskController {
 
 
 	updateById = asyncHandler(async (req, res, next) => {
-		const validatedDtoId = TaskGetByIdSchema.validate(req.params.id);
+		const validatedDtoId = TaskGetByIdSchema.validate(req.params);
 		if (validatedDtoId.error) {
 			throw new TaskException(validatedDtoId.error.message)
 		}
