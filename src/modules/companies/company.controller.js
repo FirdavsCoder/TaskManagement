@@ -21,8 +21,18 @@ export class CompanyController {
 	});
 
 	getAll = asyncHandler(async (req, res, next) => {
-		const resData = await this.#companyService.getAll()
-		return res.status(resData.statusCode).json(resData)
+		console.log(req.role)
+		if (req.role === "superAdmin") {
+			const resData = await this.#companyService.getAll()
+			return res.status(resData.statusCode).json(resData)
+		}
+		else if (req.role === "admin" || req.role === "manager") {
+			const resData = await this.#companyService.getById(req.user.data.company_id)
+			return res.status(resData.statusCode).json(resData)
+		}
+		else {
+			throw new Error("Not Authenticated")
+		}
 	})
 
 	getById = asyncHandler(async (req, res, next) => {
@@ -30,9 +40,18 @@ export class CompanyController {
 		if (validatedData.error) {
 			return next(new ResData(validatedData.error.message, 400))
 		}
-		const resData = await this.#companyService.getById(req.params.id)
-		return res.status(resData.statusCode).json(resData)
-	})
+		if (req.role === "superAdmin") {
+			const resData = await this.#companyService.getById(req.params.id)
+			return res.status(resData.statusCode).json(resData)
+		}
+		else if (req.role === "admin" || req.role === "manager" || req.role === "worker") {
+			const resData = await this.#companyService.getById(req.user.data.company_id)
+			return res.status(resData.statusCode).json(resData)
+		}
+		else {
+			throw new Error("Not Authenticated")
+		}
+	});
 
 	updateById = asyncHandler(async (req, res, next) => {
 		const validatedDtoId = CompanyGetByIdSchema.validate(req.params)
@@ -43,9 +62,17 @@ export class CompanyController {
 		if (validatedDto.error) {
 			throw new CompanyException(validatedDto.error.message)
 		}
-
-		const resData = await this.#companyService.update(req.params.id, req.body)
-		return res.status(resData.statusCode).json(resData)
+		if (req.role === "superAdmin") {
+			const resData = await this.#companyService.update(req.params.id, req.body)
+			return res.status(resData.statusCode).json(resData)
+		}
+		else if (req.role === "admin" || req.role === "manager") {
+			const resData = await this.#companyService.update(req.user.data.company_id, req.body)
+			return res.status(resData.statusCode).json(resData)
+		}
+		else {
+			throw new Error("Not Authenticated")
+		}
 	})
 
 	delete = asyncHandler( async (req, res, next) => {
@@ -53,8 +80,17 @@ export class CompanyController {
 		if(validatedDto.error) {
 			throw new CompanyException(validatedDto.error.message)
 		}
-		const resData = await this.#companyService.delete(req.params.id)
-		return res.status(resData.statusCode).json(resData)
+		if (req.role === "superAdmin") {
+			const resData = await this.#companyService.delete(req.params.id)
+			return res.status(resData.statusCode).json(resData)
+		}
+		else if (req.role === "admin" || req.role === "manager") {
+			const resData = await this.#companyService.delete(req.user.data.company_id)
+			return res.status(resData.statusCode).json(resData)
+		}
+		else {
+			throw new Error("Not Authenticated")
+		}
 	})
 }
 
