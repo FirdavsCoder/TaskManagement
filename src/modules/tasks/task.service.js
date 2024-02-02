@@ -56,6 +56,18 @@ export class TaskService {
 		)
 	};
 
+	async getByCompanyId(id) {
+		const foundCompany = await this.#repository.getByCompanyId(id)
+		if (!foundCompany) {
+			throw new TaskException("Task Not Found", 404)
+		}
+		return new ResData(
+			"Successfully found",
+			200,
+			foundCompany
+		)
+	}
+
 
 	async delete(id) {
 		await this.getById(id);

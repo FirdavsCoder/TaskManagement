@@ -8,10 +8,11 @@ const router = Router()
 const companyService = new CompanyService()
 const companyController = new CompanyController(companyService)
 
-router.post("/", companyController.insert);
-router.get("/:id", companyController.getById);
-router.put("/:id", companyController.updateById);
-router.delete("/:id", companyController.delete);
+router.post("/", checkUser, companyController.insert);
+router.put("/:id", checkUser, companyController.updateById);
+router.delete("/:id",checkUser, companyController.delete);
+router.get("/my", checkUser, companyController.getMyCompany);
+router.get("/:id", checkUser, companyController.getById);
 router.get("/", checkUser, companyController.getAll);
 
 

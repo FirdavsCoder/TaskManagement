@@ -17,7 +17,10 @@ export class UserTaskController {
 		if (validatedData.error) {
 			throw new UserTaskException(validatedData.error.message)
 		}
-
+		if (req.role === "superAdmin" || req.role === "admin" || req.role === "manager") {
+			const resData = await this.#service.insert(dto)
+			return res.status(resData.statusCode || 400).json(resData)
+		}
 		const resData = await this.#service.insert(dto)
 		return res.status(resData.statusCode || 400).json(resData)
 	});
@@ -50,9 +53,12 @@ export class UserTaskController {
 		if (validatedDto.error) {
 			throw new UserTaskException(validatedDto.error.message)
 		}
-
-		const resData = await this.#service.update(req.params.id, req.body)
-		return res.status(resData.statusCode || 400).json(resData)
+		if (req.role === "superAdmin" || req.role === "admin" || req.role === "manager") {
+			const resData = await this.#service.update(req.params.id, req.body)
+			return res.status(resData.statusCode || 400).json(resData)
+		} else {
+			throw new Error("Not Access")
+		}
 	})
 
 	delete = asyncHandler(async (req, res, next) => {
@@ -60,7 +66,32 @@ export class UserTaskController {
 		if(validatedDtoId.error) {
 			throw new UserTaskException(validatedDtoId.error.message)
 		}
-		const resData = await this.#service.delete(req.params.id)
-		return res.status(resData.statusCode || 400).json(resData);
+		if (req.role === "superAdmin" || req.role === "admin") {
+			const resData = await this.#service.delete(req.params.id)
+			return res.status(resData.statusCode || 400).json(resData);
+		} else {
+			throw new Error("Not Access")
+		}
 	});
+
+	getByTaskId = asyncHandler( async (req, res, next) => {
+		const validatedData = getUserTaskByIdSchema.validate(req.params)
+		if (validatedData.error) {
+			throw new UserTaskException(validatedData.error.message)
+		}
+
+		const resData = await this.#service.getByTaskId(req.params.id)
+		return res.status(resData.statusCode || 400).json(resData)
+	})
+
+	getByUserId = asyncHandler( async (req, res, next) => {
+		const validatedData = getUserTaskByIdSchema.validate(req.params)
+		if (validatedData.error) {
+			throw new UserTaskException(validatedData.error.message)
+		}
+
+		const resData = await this.#service.getByUserId(req.params.id)
+		return res.status(resData.statusCode || 400).json(resData)
+	})
+
 }

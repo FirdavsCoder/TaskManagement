@@ -32,6 +32,30 @@ export class UserTaskService {
 		)
 	};
 
+	async getByUserId(id) {
+		const foundUserTask  = await this.#repository.getByUserId(id);
+		if (!foundUserTask) {
+			throw new UserTaskException("User Task Not Found", 404)
+		}
+		return new ResData(
+			"Successfully found",
+			200,
+			foundUserTask
+		)
+	};
+
+	async getByTaskId(id) {
+		const foundUserTask  = await this.#repository.getByTaskId(id);
+		if (!foundUserTask) {
+			throw new UserTaskException("User Task Not Found", 404)
+		}
+		return new ResData(
+			"Successfully found",
+			200,
+			foundUserTask
+		)
+	}
+
 	async getById(id) {
 		const foundUserTask  = await this.#repository.getById(id);
 		if (!foundUserTask) {

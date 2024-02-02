@@ -23,6 +23,10 @@ export class TaskRepository extends Postgres {
 		)
 	};
 
+	async getByCompanyId(id) {
+		return await this.fetch("SELECT * FROM tasks WHERE company_id = $1", id)
+	}
+
 	async delete(id) {
 		return await this.fetch("DELETE FROM tasks WHERE id=$1 RETURNING *", id)
 	};

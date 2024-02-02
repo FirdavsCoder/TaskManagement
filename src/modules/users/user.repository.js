@@ -12,6 +12,14 @@ export class UserRepository extends Postgres {
 		return await this.fetchAll("SELECT * FROM users")
 	}
 
+	async getAllUsersByCompanyId(id) {
+		return await this.fetchAll("SELECT * FROM users WHERE company_id =$1", id)
+	}
+
+	async getUserByCompanyAndUserId(company_id, user_id) {
+		return await this.fetch("SELECT * FROM users WHERE id = $2 AND company_id = $1", company_id, user_id)
+	}
+
 	async getById(id) {
 		return await this.fetch("SELECT * FROM users WHERE id = $1", id)
 	};

@@ -15,14 +15,28 @@ export class TaskController {
 		if (validatedData.error) {
 			throw new TaskException(validatedData.error.message)
 		}
-
-		const resData = await this.#service.insert(dto)
-		return res.status(resData.statusCode || 400).json(resData)
+		if (req.role === "superAdmin" || req.role === "admin" || req.role === "manager") {
+			const resData = await this.#service.insert(dto)
+			return res.status(resData.statusCode || 400).json(resData)
+		}
+		else {
+			throw new Error("Not Authenticated")
+		}
 	});
 
 
 	getAll = asyncHandler(async (req, res, next) => {
 		const resData = await this.#service.getAll()
+		return res.status(resData.statusCode || 400).json(resData)
+	});
+
+
+	getByCompanyId = asyncHandler( async (req, res, next) => {
+		const validatedData = TaskGetByIdSchema.validate(req.params)
+		if (validatedData.error) {
+			throw new TaskException(validatedData.error.message)
+		}
+		const resData = await this.#service.getByCompanyId(req.params.id)
 		return res.status(resData.statusCode || 400).json(resData)
 	});
 
@@ -43,22 +57,30 @@ export class TaskController {
 		if (validatedDtoId.error) {
 			throw new TaskException(validatedDtoId.error.message)
 		}
-
 		const validatedDto = TaskSchema.validate(req.body)
 		if (validatedDto.error) {
 			throw new TaskException(validatedDto.error.message)
 		}
-
-		const resData = await this.#service.update(req.params.id, req.body)
-		return res.status(resData.statusCode || 400).json(resData)
-	})
+		if (req.role === "superAdmin" || req.role === "admin" || req.role === "manager") {
+			const resData = await this.#service.update(req.params.id, req.body)
+			return res.status(resData.statusCode || 400).json(resData)
+		}
+		else {
+			throw new Error("Not Access")
+		}
+	});
 
 	delete = asyncHandler(async (req, res, next) => {
 		const validatedDtoId = TaskGetByIdSchema.validate(req.params)
 		if(validatedDtoId.error) {
 			throw new TaskException(validatedDtoId.error.message)
 		}
-		const resData = await this.#service.delete(req.params.id)
-		return res.status(resData.statusCode || 400).json(resData);
+		if (req.role === "superAdmin" || req.role === "admin") {
+			const resData = await this.#service.delete(req.params.id)
+			return res.status(resData.statusCode || 400).json(resData);
+		}
+		else {
+			throw new Error("Not Access")
+		}
 	});
 }

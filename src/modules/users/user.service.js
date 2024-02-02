@@ -31,7 +31,14 @@ export class UserService {
 		)
 	};
 
-
+	async getAllUsersByCompanyId(id) {
+		const allUsers = await this.#repository.getAllUsersByCompanyId(id)
+		return new ResData(
+			"All Users",
+			200,
+			allUsers
+		)
+	};
 
 	async loginUser(dto) {
 		const foundUserByLogin = await this.getUserByLogin(dto.login);
@@ -65,6 +72,19 @@ export class UserService {
 
 	async getById(id) {
 		const foundUser = await this.#repository.getById(id)
+		if (!foundUser) {
+			throw new UserException("User Not Found", 404)
+		}
+
+		return new ResData(
+			"Successfully found",
+			200,
+			foundUser
+		)
+	};
+
+	async getUSerByCompanyUserId(company_id, user_id) {
+		const foundUser = await this.#repository.getUSerByCompanyUserId(company_id, user_id)
 		if (!foundUser) {
 			throw new UserException("User Not Found", 404)
 		}

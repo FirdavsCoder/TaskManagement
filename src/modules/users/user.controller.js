@@ -23,18 +23,46 @@ export class UserController {
 	})
 
 	getAll = asyncHandler( async (req, res, next) => {
-		const resData = await this.#service.getAll()
-		return res.status(resData.statusCode).json(resData)
+		if (req.role === "superAdmin") {
+			const resData = await this.#service.getAll()
+			return res.status(resData.statusCode).json(resData)
+		}
+		else if (req.role === "admin" || req.role === "manager") {
+			const resData = await this.#service.getAllUsersByCompanyId(req.user.data.company_id)
+			return res.status(resData.statusCode).json(resData)
+		}
+		else {
+			throw new Error("Not Authenticated")
+		}
 	})
+
 
 	getById = asyncHandler( async (req, res, next) => {
 		const validatedData = UserGetByIdSchema.validate(req.params)
 		if (validatedData.error) {
 			throw new UserException(validatedData.error.message, 400)
 		}
-		const resData = await this.#service.getById(req.params.id)
-		return res.status(resData.statusCode || 400).json(resData)
+
+
+		if (req.role === "superAdmin") {
+			const resData = await this.#service.getById(req.params.id)
+			return res.status(resData.statusCode).json(resData)
+		}
+		else if (req.role === "admin" || req.role === "manager") {
+			const resData = await this.#service.getUSerByCompanyUserId(req.user.data.company_id, req.params.id)
+			return res.status(resData.statusCode).json(resData)
+		}
+		else if (req.role === "worker") {
+			const resData = await this.#service.getUSerByCompanyUserId(req.user.data.company_id, req.user.data.id)
+			return res.status(resData.statusCode).json(resData)
+		}
+		else {
+			throw new Error("Not Authenticated")
+		}
+
 	})
+
+
 
 
 	updateById = asyncHandler( async (req, res, next) => {
@@ -60,6 +88,10 @@ export class UserController {
 		const resData = await this.#service.delete(req.params.id)
 		return res.status(resData.statusCode || 400).json(resData)
 	})
+
+
+
+
 
 	loginUser = asyncHandler( async (req, res, next) => {
 		const dto = req.body

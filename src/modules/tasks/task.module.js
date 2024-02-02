@@ -13,6 +13,8 @@ router.put("/:id", checkUser, taskController.updateById);
 router.delete("/:id", checkUser, taskController.delete);
 router.get("/:id", checkUser, taskController.getById);
 router.get("/", checkUser, taskController.getAll);
+router.get("/company/:id", taskController.getByCompanyId);
+
 
 
 export default {router}

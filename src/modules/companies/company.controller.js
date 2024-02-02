@@ -16,11 +16,16 @@ export class CompanyController {
 		if(validatedData.error) {
 			return next(new CompanyException(validatedData.error.message))
 		}
-		const resData = await this.#companyService.insert(dto)
-		return res.status(resData.statusCode).json(resData)
+		if (req.role === "superAdmin") {
+			const resData = await this.#companyService.insert(dto)
+			return res.status(resData.statusCode).json(resData)
+		}
+		else {
+			throw new Error("Not Access")
+		}
 	});
 
-	getAll = asyncHandler(async (req, res, next) => {
+	getAll = asyncHandler(async (req, res) => {
 		console.log(req.role)
 		if (req.role === "superAdmin") {
 			const resData = await this.#companyService.getAll()
@@ -31,9 +36,15 @@ export class CompanyController {
 			return res.status(resData.statusCode).json(resData)
 		}
 		else {
-			throw new Error("Not Authenticated")
+			throw new Error("Not Access")
 		}
 	})
+
+	getMyCompany = asyncHandler( async (req, res) => {
+		const resData = await this.#companyService.getById(req.user.data.company_id)
+		return res.status(resData.statusCode).json(resData)
+	});
+
 
 	getById = asyncHandler(async (req, res, next) => {
 		const validatedData = CompanyGetByIdSchema.validate(req.params)
@@ -53,7 +64,7 @@ export class CompanyController {
 		}
 	});
 
-	updateById = asyncHandler(async (req, res, next) => {
+	updateById = asyncHandler(async (req, res) => {
 		const validatedDtoId = CompanyGetByIdSchema.validate(req.params)
 		if (validatedDtoId.error) {
 			throw new CompanyException(validatedDtoId.error.message)
@@ -66,26 +77,18 @@ export class CompanyController {
 			const resData = await this.#companyService.update(req.params.id, req.body)
 			return res.status(resData.statusCode).json(resData)
 		}
-		else if (req.role === "admin" || req.role === "manager") {
-			const resData = await this.#companyService.update(req.user.data.company_id, req.body)
-			return res.status(resData.statusCode).json(resData)
-		}
 		else {
 			throw new Error("Not Authenticated")
 		}
 	})
 
-	delete = asyncHandler( async (req, res, next) => {
+	delete = asyncHandler( async (req, res) => {
 		const validatedDto = CompanyGetByIdSchema.validate(req.params)
 		if(validatedDto.error) {
 			throw new CompanyException(validatedDto.error.message)
 		}
 		if (req.role === "superAdmin") {
 			const resData = await this.#companyService.delete(req.params.id)
-			return res.status(resData.statusCode).json(resData)
-		}
-		else if (req.role === "admin" || req.role === "manager") {
-			const resData = await this.#companyService.delete(req.user.data.company_id)
 			return res.status(resData.statusCode).json(resData)
 		}
 		else {

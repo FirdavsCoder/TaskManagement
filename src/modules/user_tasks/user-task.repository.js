@@ -12,6 +12,14 @@ export class UserTaskRepository extends Postgres {
 		return await this.fetchAll("SELECT * FROM user_tasks")
 	}
 
+	async getByUserId(id) {
+		return await this.fetchAll("SELECT * FROM user_tasks WHERE user_id=$1", id)
+	}
+
+	async getByTaskId(id) {
+		return await this.fetchAll("SELECT * FROM user_tasks WHERE task_id=$1", id)
+	}
+
 	async getById(id) {
 		return await this.fetch("SELECT * FROM user_tasks WHERE id=$1", id)
 	}
